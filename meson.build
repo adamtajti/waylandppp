@@ -26,7 +26,7 @@ project(
   'waylandppp',
   'cpp',
   version: '1.0.0',
-  default_options : ['default_library=static'])
+  default_options : [])
 
 # Resolve dependencies as soon as possible to avoid unnecessary work
 # tested with 1.14
@@ -73,7 +73,7 @@ version_array = meson.project_version().split('.')
 wayland_version_config.set('PROJECT_VERSION_MAJOR', version_array[0])
 wayland_version_config.set('PROJECT_VERSION_MINOR', version_array[1])
 wayland_version_config.set('PROJECT_VERSION_PATCH', version_array[2])
-configure_file(
+wayland_version_file = configure_file(
   input: 'include/wayland-version.hpp.in',
   output:  'wayland-version.hpp',
   configuration: wayland_version_config,
@@ -116,7 +116,10 @@ wayland_client_protocol = custom_target('wayland-client-protocol',
     join_paths(build_root, 'wayland-client-protocol.hpp'),
     join_paths(build_root, 'wayland-client-protocol.cpp'),
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Use wayland-scanner+++ to generate wayland-client-protocol-stable.(cpp|hpp)
 wayland_client_protocol_stable = custom_target('wayland-client-protocol-stable',
@@ -129,7 +132,10 @@ wayland_client_protocol_stable = custom_target('wayland-client-protocol-stable',
     join_paths(build_root, 'wayland-client-protocol-stable.hpp'),
     join_paths(build_root, 'wayland-client-protocol-stable.cpp'),
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Use wayland-scanner+++ to generate wayland-client-protocol-unstable.(cpp|hpp)
 wayland_client_protocol_unstable = custom_target('wayland-client-protocol-unstable',
@@ -144,7 +150,10 @@ wayland_client_protocol_unstable = custom_target('wayland-client-protocol-unstab
     '-x',
     wayland_client_protocol_stable
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Use wayland-scanner+++ to generate wayland-server-protocol.(cpp|hpp)
 wayland_server_protocol = custom_target('wayland-server-protocol',
@@ -159,7 +168,10 @@ wayland_server_protocol = custom_target('wayland-server-protocol',
     join_paths(build_root, 'wayland-server-protocol.hpp'),
     join_paths(build_root, 'wayland-server-protocol.cpp'),
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Use wayland-scanner+++ to generate wayland-server-protocol-stable.(cpp|hpp)
 wayland_server_protocol_stable = custom_target('wayland-server-protocol-stable',
@@ -176,7 +188,10 @@ wayland_server_protocol_stable = custom_target('wayland-server-protocol-stable',
     '-x',
     wayland_server_protocol
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Use wayland-scanner+++ to generate wayland-server-protocol-unstable.(cpp|hpp)
 wayland_server_protocol_unstable = custom_target('wayland-server-protocol-unstable',
@@ -194,7 +209,10 @@ wayland_server_protocol_unstable = custom_target('wayland-server-protocol-unstab
     wayland_server_protocol_stable
 
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Use wayland-scanner+++ to generate wlr-client-protocol-unstable.(cpp|hpp)
 wlr_client_protocol_unstable = custom_target('wlr-client-protocol-unstable',
@@ -209,7 +227,10 @@ wlr_client_protocol_unstable = custom_target('wlr-client-protocol-unstable',
     '-x',
     wayland_client_protocol_stable
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Use wayland-scanner+++ to generate wlr-server-protocol-unstable.(cpp|hpp)
 wlr_server_protocol_unstable = custom_target('wlr-server-protocol-unstable',
@@ -226,7 +247,10 @@ wlr_server_protocol_unstable = custom_target('wlr-server-protocol-unstable',
     '-x',
     wayland_server_protocol_stable
   ],
-  build_by_default : true)
+  build_by_default : true,
+  install: true,
+  install_dir: [get_option('includedir'),false]
+)
 
 # Build both shared and static libraries
 # note: only the first output is taken for these lib dependencies, reasoning:
@@ -243,7 +267,7 @@ pkg_vars = [
 ]
 
 # Build wayland-client+++.(so|a)
-wayland_client_ppp = both_libraries('wayland-client+++',
+wayland_client_ppp = library('wayland-client+++',
   include_directories: [ 'include', ],
   sources: [
     join_paths(build_root, 'wayland-version.hpp'),
@@ -253,6 +277,7 @@ wayland_client_ppp = both_libraries('wayland-client+++',
     wayland_client_protocol_stable
   ],
   dependencies: [ wayland_client_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -266,7 +291,7 @@ pkg_config.generate(
 )
 
 # Build wayland-client-stable+++.(so|a)
-wayland_client_stable_ppp = both_libraries('wayland-client-stable+++',
+wayland_client_stable_ppp = library('wayland-client-stable+++',
   include_directories: [ 'include', ],
   override_options: ['b_lundef=false'],
   sources: [
@@ -277,6 +302,7 @@ wayland_client_stable_ppp = both_libraries('wayland-client-stable+++',
   ],
   link_with: [wayland_client_ppp ],
   dependencies: [ wayland_client_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -290,7 +316,7 @@ pkg_config.generate(
 )
 
 # Build wayland-client-unstable+++.(so|a)
-wayland_client_unstable_ppp = both_libraries('wayland-client-unstable+++',
+wayland_client_unstable_ppp = library('wayland-client-unstable+++',
   include_directories: [ 'include', ],
   override_options: ['b_lundef=false'],
   sources: [
@@ -302,6 +328,7 @@ wayland_client_unstable_ppp = both_libraries('wayland-client-unstable+++',
   ],
   link_with: [wayland_client_ppp, wayland_client_stable_ppp ],
   dependencies: [ wayland_client_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -315,7 +342,7 @@ pkg_config.generate(
 )
 
 # Build wayland-server+++.(so|a)
-wayland_server_ppp = both_libraries('wayland-server+++',
+wayland_server_ppp = library('wayland-server+++',
   include_directories: [ 'include', ],
   sources: [
     wayland_server_protocol,
@@ -337,7 +364,7 @@ pkg_config.generate(
 )
 
 # Build wayland-server-stable+++.(so|a)
-wayland_server_stable_ppp = both_libraries('wayland-server-stable+++',
+wayland_server_stable_ppp = library('wayland-server-stable+++',
   include_directories: [ 'include', ],
   override_options: ['b_lundef=false'],
   sources: [
@@ -348,6 +375,7 @@ wayland_server_stable_ppp = both_libraries('wayland-server-stable+++',
   ],
   link_with: [ wayland_server_ppp ],
   dependencies: [ wayland_server_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -361,7 +389,7 @@ pkg_config.generate(
 )
 
 # Build wayland-server-unstable+++.(so|a)
-wayland_server_unstable_ppp = both_libraries('wayland-server-unstable+++',
+wayland_server_unstable_ppp = library('wayland-server-unstable+++',
   include_directories: [ 'include', ],
   sources: [
     wayland_server_protocol_unstable,
@@ -385,7 +413,7 @@ pkg_config.generate(
 )
 
 # Build wayland-egl-+++.(so|a)
-wayland_egl_ppp = both_libraries('wayland-egl+++',
+wayland_egl_ppp = library('wayland-egl+++',
   include_directories: [ 'include', ],
   sources: [
     join_paths(build_root, 'wayland-version.hpp'),
@@ -394,6 +422,7 @@ wayland_egl_ppp = both_libraries('wayland-egl+++',
   ],
   link_with: [wayland_client_ppp ],
   dependencies: [ wayland_egl_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -407,7 +436,7 @@ pkg_config.generate(
 )
 
 # Build wayland-cursor-+++.(so|a)
-wayland_cursor_ppp = both_libraries('wayland-cursor+++',
+wayland_cursor_ppp = library('wayland-cursor+++',
   include_directories: [ 'include', ],
   sources: [
     join_paths(build_root, 'wayland-version.hpp'),
@@ -416,6 +445,7 @@ wayland_cursor_ppp = both_libraries('wayland-cursor+++',
   ],
   link_with: [wayland_client_ppp ],
   dependencies: [ wayland_cursor_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -429,7 +459,7 @@ pkg_config.generate(
 )
 
 # Build wayland-wlr-client+++.(so|a)
-wayland_wlr_client_ppp = both_libraries('wayland-wlr-client+++',
+wayland_wlr_client_ppp = library('wayland-wlr-client+++',
   include_directories: [ 'include', ],
   sources: [
     join_paths(build_root, 'wayland-version.hpp'),
@@ -441,6 +471,7 @@ wayland_wlr_client_ppp = both_libraries('wayland-wlr-client+++',
   ],
   link_with: [wayland_client_ppp, wayland_client_stable_ppp ],
   dependencies: [ wayland_client_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -454,7 +485,7 @@ pkg_config.generate(
 )
 
 # Build wayland-wlr-server+++.(so|a)
-wayland_wlr_server_ppp = both_libraries('wayland-wlr-server+++',
+wayland_wlr_server_ppp = library('wayland-wlr-server+++',
   include_directories: [ 'include', ],
   sources: [
     join_paths(build_root, 'wayland-version.hpp'),
@@ -465,6 +496,7 @@ wayland_wlr_server_ppp = both_libraries('wayland-wlr-server+++',
   ],
   link_with: [wayland_server_ppp, wayland_server_stable_ppp ],
   dependencies: [ wayland_server_dep ],
+  install: true,
 )
 
 pkg_config.generate(
@@ -475,6 +507,16 @@ pkg_config.generate(
   name: 'Wayland C++ WLR Server',
   description: 'Wayland C++ WLR server side library',
   variables: pkg_vars,
+)
+
+# At last, install the headers as well
+install_headers(
+  'include/wayland-client.hpp',
+  'include/wayland-cursor.hpp',
+  'include/wayland-egl.hpp',
+  'include/wayland-server.hpp',
+  'include/wayland-util.hpp',
+  wayland_version_file,
 )
 
 # Create and install the HTML based API documentation (requires Doxygen)
