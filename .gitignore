@@ -4,6 +4,7 @@
 *.pc
 *-protocol.*pp
 .ccls-cache
+.cache
 compile_commands.json
 .clang_complete
 scanner/wayland-scanner++
@@ -14,5 +15,4 @@ example/dump
 example/proxy_wrapper
 Doxyfile
 example/server
-doc
-/build/
+build/

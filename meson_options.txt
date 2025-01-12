@@ -1,0 +1,29 @@
+# option(
+#   'build-scanner',
+#   type: 'boolean',
+#   value: true,
+#   description: 'whether to build wayland-scanner++')
+# option(
+#   'build-libraries',
+#   type: 'boolean',
+#   value: true,
+#   description: 'whether to build the libraries')
+option(
+  'install-documentation',
+  type: 'boolean',
+  value: true,
+  description : 'Create and install the HTML based API documentation (requires Doxygen)')
+option(
+  'docdir',
+   type: 'string',
+   description: 'Directory for installing documentation to (defaults to waylandpp_datadir/doc/meson.project_name() )')
+option(
+  'install-unstable-protocols',
+  type:'boolean',
+  value: true,
+  description: 'whether to install the unstable protocols')
+option(
+  'build-server',
+  type: 'boolean',
+  value: true,
+  description: 'whether to build the server bindings.')
