@@ -32,7 +32,7 @@ well as graphviz is required.
 
 ## Building
 
-### Library
+### Debug
 
 ```bash
 # -Db_sanitize=address
@@ -43,6 +43,14 @@ well as graphviz is required.
 # problematic, because pkg-config doesn't search in that directory by default.
 # As a workaround, lets set the prefix in the setup call
 meson setup -Db_sanitize=address --prefix=/usr --reconfigure build
+meson compile -C build
+meson install -C build
+```
+
+### Release
+
+```bash
+meson setup -Dbuildtype=release -Doptimization=3 -Ddebug=false --prefix=/usr --reconfigure build
 meson compile -C build
 meson install -C build
 ```
